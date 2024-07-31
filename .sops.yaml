@@ -2,4 +2,4 @@
 creation_rules:
   - path_regex: /*secrets(\.encrypted)?.yaml
     encrypted_regex: "^(id|secret|token|ca|crt|key)$"
-    age: 
+    age: age
