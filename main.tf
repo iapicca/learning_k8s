@@ -3,7 +3,7 @@ provider "digitalocean" {
 }
 
 resource "digitalocean_ssh_key" "ssh_keys" {
-  name       = "my-key"
+  name       = "my_ssh_keys"
   public_key = file("/Users/francesco/.ssh/id_ed25519.pub")
 }
 
