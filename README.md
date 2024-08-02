@@ -14,6 +14,8 @@
     mkdir -p ~/.ssh
     touch ~/.ssh/authorized_keys
     ```
+- add permissions
+    `chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys`
 - add key to zsh\
     `echo "export DIGITAL_OCEAN_SSH_KEY=$HOME'/.ssh/do_ssh_key.pub'" >> ~/.zshrc`
 - create ssh key
@@ -22,10 +24,8 @@
     -C "francesco@yakforward.com" \
     -f "$(echo $DIGITAL_OCEAN_SSH_KEY | sed 's/\.pub$//')"
     ```
-- add key to the authorized keys
-    `echo $DIGITAL_OCEAN_SSH_KEY >> ~/.ssh/authorized_keys`
-- add permissions
-    `chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys`
+- add public key to authorized_keys
+    `cat "$DIGITAL_OCEAN_SSH_KEY" >> ~/.ssh/authorized_keys`
 - copy the location of the public key in `main.tf`
     `sed -i '' "s|digitalocean_ssh_key_location|\"${DIGITAL_OCEAN_SSH_KEY}\"|g" main.tf`
 
@@ -36,7 +36,7 @@
 - add file location to .zshrc (or whatever)\
     `echo "export SOPS_AGE_KEY_FILE='$HOME/.sops/key.txt'" >> ~/.zshrc`
 - copy age public key into `.sops.yaml`\
-    `sed -i '' "s/age_key/$(sed -n 's/# public key: //p' $SOPS_AGE_KEY_FILE)/" .sops.yaml`
+    `sed -i '' "s/age_public_key/$(sed -n 's/# public key: //p' $SOPS_AGE_KEY_FILE)/" .sops.yaml`
 
 ### encrypt
 
