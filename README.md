@@ -1,13 +1,35 @@
 
-#IaC 
+# OpenTofu Kubernetes Cluster setup
 
-### install tools
+## install tools
 
 - brew install [opentofu]( https://github.com/opentofu/opentofu)
 - brew install [age](https://github.com/FiloSottile/age)
 - brew install [sops](https://github.com/getsops/sops)
 
-### setup
+## ssh setup
+
+- create `.ssh` folder in the home directory with a file \
+    ```bash
+    mkdir -p ~/.ssh
+    touch ~/.ssh/authorized_keys
+    ```
+- add key to zsh\
+    `echo "export DIGITAL_OCEAN_SSH_KEY=$HOME'/.ssh/do_ssh_key.pub'" >> ~/.zshrc`
+- create ssh key
+    ```bash
+    ssh-keygen -t rsa -b 2048 \
+    -C "francesco@yakforward.com" \
+    -f "$(echo $DIGITAL_OCEAN_SSH_KEY | sed 's/\.pub$//')"
+    ```
+- add key to the authorized keys
+    `echo $DIGITAL_OCEAN_SSH_KEY >> ~/.ssh/authorized_keys`
+- add permissions
+    `chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys`
+- copy the location of the public key in `main.tf`
+    `sed -i '' "s|digitalocean_ssh_key_location|\"${DIGITAL_OCEAN_SSH_KEY}\"|g" main.tf`
+
+## digital toven token setup
 
 - create a encryption key\
     `age-keygen -o ~/.sops/key.txt`
@@ -24,12 +46,17 @@
 
 - run `sops --decrypt encrypted.tfvars.json`
 
-### OPENTOFU usage
-
-- tofu apply -var-file=<(sops -d secrets.tfvars.json)
-
-
-
-
 ### NOTES
-- sops doesn't support *.ftvars, so just use *.ftvars
+- sops doesn't support *.ftvars, so just use *.ftvars.json
+
+## OPENTOFU 
+
+- tofu init
+
+- tofu apply
+
+- tofu destroy
+
+## Login in remote server
+
+- ssh root@xxx.xxx.xxx.xxx

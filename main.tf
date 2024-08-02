@@ -4,7 +4,7 @@ provider "digitalocean" {
 
 resource "digitalocean_ssh_key" "ssh_keys" {
   name       = "my_ssh_keys"
-  public_key = file("/Users/francesco/.ssh/id_ed25519.pub")
+  public_key = file(digitalocean_ssh_key_location)
 }
 
 resource "digitalocean_droplet" "master_node" {
