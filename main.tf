@@ -2,12 +2,17 @@ provider "digitalocean" {
   token = var.digitalocean_token
 }
 
+resource "digitalocean_ssh_key" "ssh_keys" {
+  name       = "my-key"
+  public_key = file("/Users/francesco/.ssh/id_ed25519.pub")
+}
+
 resource "digitalocean_droplet" "master_node" {
   name               = "master-node"
   region             = "fra1"
   size               = "s-1vcpu-1gb"
   image              = "ubuntu-24-04-x64"
-  ssh_keys           = ["SHA256:+yx+g3YiaKGNZOesz0ElXR3pCkAkm3Gx+64Xu9PRONg francesco@Francescos-MacBook-Air.local"]
+  ssh_keys           = [digitalocean_ssh_key.ssh_keys.id]
   backups            = false
   ipv6               = true
 }
@@ -17,7 +22,7 @@ resource "digitalocean_droplet" "controller_node1" {
   region             = "fra1"
   size               = "s-1vcpu-1gb"
   image              = "ubuntu-24-04-x64"
-  ssh_keys           = [var.ssh_fingerprint]
+  ssh_keys           = [digitalocean_ssh_key.ssh_keys.id]
   backups            = false
   ipv6               = true
 }
@@ -27,7 +32,7 @@ resource "digitalocean_droplet" "controller_node2" {
   region             = "fra1"
   size               = "s-1vcpu-1gb"
   image              = "ubuntu-24-04-x64"
-  ssh_keys           = [var.ssh_fingerprint]
+  ssh_keys           = [digitalocean_ssh_key.ssh_keys.id]
   backups            = false
   ipv6               = true
 }
