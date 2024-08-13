@@ -17,7 +17,7 @@
 - add permissions
     `chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys`
 - add key to zsh\
-    `echo "export DIGITAL_OCEAN_SSH_KEY=$HOME'/.ssh/do_ssh_key.pub'" >> ~/.zshrc`
+    `echo 'export DIGITAL_OCEAN_SSH_KEY="$HOME/.ssh/do_ssh_key.pub"' >> ~/.zshrc`
 - create ssh key
     ```bash
     ssh-keygen -t rsa -b 2048 \
@@ -44,7 +44,7 @@
 
 ### decrypt
 
-- run `sops --decrypt encrypted.tfvars.json`
+- run `sops --decrypt encrypted.tfvars.json > secrets.tfvars.json`
 
 ### NOTES
 - sops doesn't support *.ftvars, so just use *.ftvars.json
@@ -53,7 +53,7 @@
 
 - tofu init
 
-- tofu apply
+- tofu apply -var-file="secrets.tfvars.json"
 
 - tofu destroy
 
