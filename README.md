@@ -9,25 +9,23 @@
 
 ## ssh setup
 
-- create `.ssh` folder in the home directory with a file \
-    ```bash
-    mkdir -p ~/.ssh
-    touch ~/.ssh/authorized_keys
-    ```
-- add permissions
-    `chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys`
+- create `.ssh` folder in the home directory and add permissions \
+    `mkdir -p ~/.ssh && chmod 700 ~/.ssh`
+
 - add key to zsh\
-    `echo 'export DIGITAL_OCEAN_SSH_KEY="$HOME/.ssh/do_ssh_key.pub"' >> ~/.zshrc`
-- create ssh key
-    ```bash
-    ssh-keygen -t rsa -b 2048 \
-    -C "francesco@yakforward.com" \
-    -f "$(echo $DIGITAL_OCEAN_SSH_KEY | sed 's/\.pub$//')"
     ```
-- add public key to authorized_keys
-    `cat "$DIGITAL_OCEAN_SSH_KEY" >> ~/.ssh/authorized_keys`
+    echo 'export DIGITAL_OCEAN_PRIVATE_KEY=$HOME"/.ssh/do_ssh_key"' >> ~/.zshrc && \
+    echo 'export DIGITAL_OCEAN_PUBLIC_KEY=$DIGITAL_OCEAN_PRIVATE_KEY".pub"' >> ~/.zshrc
+    ```
+
+- create ssh key
+    `ssh-keygen -t ed25519 -C "francesco@yakforward.com" -f "$(echo $DIGITAL_OCEAN_PRIVATE_KEY)"`
+
 - copy the location of the public key in `main.tf`
-    `sed -i '' "s|digitalocean_ssh_key_location|\"${DIGITAL_OCEAN_SSH_KEY}\"|g" main.tf`
+    `sed -i '' "s|digitalocean_public_key_location|\"${DIGITAL_OCEAN_PUBLIC_KEY}\"|g" main.tf`
+
+- copy the location of the private key in `main.tf`
+    `sed -i '' "s|digitalocean_private_key_location|\"${DIGITAL_OCEAN_PRIVATE_KEY}\"|g" main.tf`
 
 ## digital toven token setup
 
@@ -55,8 +53,8 @@
 
 - tofu apply -var-file="secrets.tfvars.json"
 
-- tofu destroy
+- tofu destroy -var-file="secrets.tfvars.json"
 
 ## Login in remote server
 
-- ssh root@xxx.xxx.xxx.xxx
+- ssh -i $DIGITAL_OCEAN_PRIVATE_KEY root@{{ip address here}}
