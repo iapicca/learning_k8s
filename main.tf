@@ -16,7 +16,6 @@ resource "digitalocean_ssh_key" "ssh_public_key" {
   public_key = file("/Users/francesco/.ssh/do_ssh_key.pub")
 }
 
-
 resource "digitalocean_droplet" "master_node" {
   name               = "master-node"
   region             = "fra1"
@@ -29,7 +28,7 @@ resource "digitalocean_droplet" "master_node" {
   connection {
     type        = "ssh"
     user        = "root"
-    private_key = file("/Users/francesco/.ssh/do_ssh_key")
+    private_key = file(digitalocean_public_key_location)
     host        = self.ipv4_address
   }
 }
@@ -46,7 +45,7 @@ resource "digitalocean_droplet" "controller_node1" {
   connection {
     type        = "ssh"
     user        = "root"
-    private_key = file("/Users/francesco/.ssh/do_ssh_key")
+    private_key = file(digitalocean_public_key_location)
     host        = self.ipv4_address
   }
 }
@@ -63,7 +62,7 @@ resource "digitalocean_droplet" "controller_node2" {
   connection {
     type        = "ssh"
     user        = "root"
-    private_key = file("/Users/francesco/.ssh/do_ssh_key")
+    private_key = file(digitalocean_public_key_location)
     host        = self.ipv4_address
   }
 }
