@@ -11,19 +11,27 @@ provider "digitalocean" {
   token = var.digitalocean_token
 }
 
-resource "digitalocean_ssh_key" "ssh_keys" {
-  name       = "my_ssh_keys"
-  public_key = file(digitalocean_ssh_key_location)
+resource "digitalocean_ssh_key" "ssh_public_key" {
+  name       = "digitalocean_public_key"
+  public_key = file("/Users/francesco/.ssh/do_ssh_key.pub")
 }
+
 
 resource "digitalocean_droplet" "master_node" {
   name               = "master-node"
   region             = "fra1"
   size               = "s-1vcpu-1gb"
   image              = "ubuntu-24-04-x64"
-  ssh_keys           = [digitalocean_ssh_key.ssh_keys.id]
+  ssh_keys           = [digitalocean_ssh_key.ssh_public_key.fingerprint]
   backups            = false
   ipv6               = true
+
+  connection {
+    type        = "ssh"
+    user        = "root"
+    private_key = file("/Users/francesco/.ssh/do_ssh_key")
+    host        = self.ipv4_address
+  }
 }
 
 resource "digitalocean_droplet" "controller_node1" {
@@ -31,9 +39,16 @@ resource "digitalocean_droplet" "controller_node1" {
   region             = "fra1"
   size               = "s-1vcpu-1gb"
   image              = "ubuntu-24-04-x64"
-  ssh_keys           = [digitalocean_ssh_key.ssh_keys.id]
+  ssh_keys           = [digitalocean_ssh_key.ssh_public_key.fingerprint]
   backups            = false
   ipv6               = true
+  
+  connection {
+    type        = "ssh"
+    user        = "root"
+    private_key = file("/Users/francesco/.ssh/do_ssh_key")
+    host        = self.ipv4_address
+  }
 }
 
 resource "digitalocean_droplet" "controller_node2" {
@@ -41,9 +56,16 @@ resource "digitalocean_droplet" "controller_node2" {
   region             = "fra1"
   size               = "s-1vcpu-1gb"
   image              = "ubuntu-24-04-x64"
-  ssh_keys           = [digitalocean_ssh_key.ssh_keys.id]
+  ssh_keys           = [digitalocean_ssh_key.ssh_public_key.fingerprint]
   backups            = false
   ipv6               = true
+
+  connection {
+    type        = "ssh"
+    user        = "root"
+    private_key = file("/Users/francesco/.ssh/do_ssh_key")
+    host        = self.ipv4_address
+  }
 }
 
 output "master_node_ip" {
