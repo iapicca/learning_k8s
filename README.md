@@ -6,6 +6,7 @@
 - brew install [opentofu]( https://github.com/opentofu/opentofu)
 - brew install [age](https://github.com/FiloSottile/age)
 - brew install [sops](https://github.com/getsops/sops)
+- brew install [go-task](https://taskfile.dev/)
 
 ## ssh setup
 
