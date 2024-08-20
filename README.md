@@ -6,6 +6,7 @@
 - brew install [opentofu]( https://github.com/opentofu/opentofu)
 - brew install [age](https://github.com/FiloSottile/age)
 - brew install [sops](https://github.com/getsops/sops)
+- brew install [go-task](https://taskfile.dev/)
 
 ## ssh setup
 
@@ -51,9 +52,9 @@
 
 - tofu init
 
-- tofu apply -var-file="secrets.tfvars.json"
+- tofu apply -var-file="secrets.tfvars.json" --auto-approve
 
-- tofu destroy -var-file="secrets.tfvars.json"
+- tofu destroy -var-file="secrets.tfvars.json" --auto-approve
 
 ## Login in remote server
 
