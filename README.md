@@ -52,9 +52,9 @@
 
 - tofu init
 
-- tofu apply -var-file="secrets.tfvars.json"
+- tofu apply -var-file="secrets.tfvars.json" --auto-approve
 
-- tofu destroy -var-file="secrets.tfvars.json"
+- tofu destroy -var-file="secrets.tfvars.json" --auto-approve
 
 ## Login in remote server
 

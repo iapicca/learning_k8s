@@ -13,7 +13,7 @@ provider "digitalocean" {
 
 resource "digitalocean_ssh_key" "ssh_public_key" {
   name       = "digitalocean_public_key"
-  public_key = file(digitalocean_public_key_location)
+  public_key = file("/Users/francesco/.ssh/do_ssh_key.pub")
 }
 
 resource "digitalocean_droplet" "master_node" {
@@ -28,19 +28,19 @@ resource "digitalocean_droplet" "master_node" {
   connection {
     type        = "ssh"
     user        = "root"
-    private_key = file(digitalocean_private_key_location)
+    private_key = file("/Users/francesco/.ssh/do_ssh_key")
     host        = self.ipv4_address
   }
 
   provisioner "file" {
     source      = "taskfiles/taskfile.yml"
-    destination = "~/taskfile.yml"
+    destination = "/root/taskfile.yml"
   }
 
   provisioner "remote-exec" {
     inline = [
       "sudo snap install task --classic",
-      "task task install_prerequisites disable_swap install_kubeadm",
+      "task setup-kubernetes",
     ]
   }
 }
@@ -57,8 +57,20 @@ resource "digitalocean_droplet" "controller_node1" {
   connection {
     type        = "ssh"
     user        = "root"
-    private_key = file(digitalocean_private_key_location)
+    private_key = file("/Users/francesco/.ssh/do_ssh_key")
     host        = self.ipv4_address
+  }
+
+  provisioner "file" {
+    source      = "taskfiles/taskfile.yml"
+    destination = "/root/taskfile.yml"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo snap install task --classic",
+      "task setup-kubernetes",
+    ]
   }
 }
 
@@ -74,7 +86,19 @@ resource "digitalocean_droplet" "controller_node2" {
   connection {
     type        = "ssh"
     user        = "root"
-    private_key = file(digitalocean_private_key_location)
+    private_key = file("/Users/francesco/.ssh/do_ssh_key")
     host        = self.ipv4_address
+  }
+
+  provisioner "file" {
+    source      = "taskfiles/taskfile.yml"
+    destination = "/root/taskfile.yml"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo snap install task --classic",
+      "task setup-kubernetes",
+    ]
   }
 }
