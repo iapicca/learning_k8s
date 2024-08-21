@@ -45,8 +45,8 @@ resource "digitalocean_droplet" "master_node" {
   }
 }
 
-resource "digitalocean_droplet" "controller_node1" {
-  name               = "controller-node1"
+resource "digitalocean_droplet" "worker_node_1" {
+  name               = "worker-node-1"
   region             = "fra1"
   size               = "s-1vcpu-1gb"
   image              = "ubuntu-24-04-x64"
@@ -74,8 +74,8 @@ resource "digitalocean_droplet" "controller_node1" {
   }
 }
 
-resource "digitalocean_droplet" "controller_node2" {
-  name               = "controller-node2"
+resource "digitalocean_droplet" "worker_node_2" {
+  name               = "worker-node-2"
   region             = "fra1"
   size               = "s-1vcpu-1gb"
   image              = "ubuntu-24-04-x64"
@@ -102,3 +102,4 @@ resource "digitalocean_droplet" "controller_node2" {
     ]
   }
 }
+
