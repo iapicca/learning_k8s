@@ -1,5 +1,0 @@
----
-creation_rules:
-  - path_regex: /*terraform(\.encrypted)?.tfvars.json
-    encrypted_regex: '^(digitalocean_token)$'
-    age: age_public_key
