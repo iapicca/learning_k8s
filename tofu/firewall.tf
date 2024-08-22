@@ -1,10 +1,15 @@
 # https://kubernetes.io/docs/reference/networking/ports-and-protocols/
 
+locals {  
+  all_ips = [for node in  flatten([
+    digitalocean_droplet.master_node,
+    digitalocean_droplet.worker_node,
+  ]) : node.ipv4_address]
+}
+
 resource "digitalocean_firewall" "kubernetes_master" {
   name   = "kubernetes-master-firewall"
-  droplet_ids = [
-    digitalocean_droplet.master_node.id
-  ]
+  droplet_ids = [digitalocean_droplet.master_node.id]
 
   # Kubernetes API server	
   inbound_rule {
@@ -16,18 +21,14 @@ resource "digitalocean_firewall" "kubernetes_master" {
   inbound_rule {
     protocol         = "tcp"
     port_range       = "2379-2380"
-    source_addresses = [
-      digitalocean_droplet.master_node.ipv4_address
-    ]
+    source_addresses = local.all_ips
+
   }
   # Kubelet API,  kube-scheduler, kube-controller-manager
   inbound_rule {
     protocol         = "tcp"
     port_range       = "10250-10252"
-    source_addresses = [
-      digitalocean_droplet.worker_node_1.ipv4_address,
-      digitalocean_droplet.worker_node_2.ipv4_address,
-      digitalocean_droplet.master_node.ipv4_address,    ]
+    source_addresses = local.all_ips
   }
   # allow ssh
   inbound_rule {
@@ -46,19 +47,12 @@ resource "digitalocean_firewall" "kubernetes_master" {
 
 resource "digitalocean_firewall" "kubernetes_worker" {
   name   = "kubernetes-worker-firewall"
-  droplet_ids = [
-    digitalocean_droplet.worker_node_1.id,
-    digitalocean_droplet.worker_node_2.id,
-  ]
+  droplet_ids = [for worker in digitalocean_droplet.worker_node : worker.id]
   # Kubelet API
   inbound_rule {
     protocol         = "tcp"
     port_range       = "10250"
-    source_addresses = [
-      digitalocean_droplet.worker_node_1.ipv4_address,
-      digitalocean_droplet.worker_node_2.ipv4_address,
-      digitalocean_droplet.master_node.ipv4_address,
-    ]
+    source_addresses = local.all_ips
   }
   # NodePort Services
   inbound_rule {
