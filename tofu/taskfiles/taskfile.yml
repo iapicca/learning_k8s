@@ -1,10 +1,9 @@
 version: '3'
 # https://kubernetes.io/blog/2023/08/15/pkgs-k8s-io-introduction/
 tasks:
-  update-packages:
-    desc: Update package index and install necessary tools
+  install-tools:
+    desc: install necessary tools
     cmds:
-      - sudo apt-get update
       - sudo apt-get install -y apt-transport-https ca-certificates curl
     sudo: true
 
@@ -30,19 +29,10 @@ tasks:
       - sudo apt-mark hold kubelet kubeadm kubectl
     sudo: true
 
-  verify-installation:
-    desc: Verify the installation of kubeadm, kubelet, and kubectl
-    cmds:
-      - kubeadm version
-      - kubelet --version
-      - kubectl version --client
-    sudo: true
-
   setup-kubernetes:
     desc: Complete setup for kubeadm on Ubuntu 24.04 using community-owned repositories
     cmds:
-      - task: update-packages
+      - task: install-tools
       - task: disable-swap
       - task: add-kubernetes-repo
       - task: install-kubeadm
-      - task: verify-installation

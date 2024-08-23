@@ -17,7 +17,8 @@ resource "digitalocean_ssh_key" "ssh_public_key" {
 }
 
 resource "digitalocean_droplet" "master_node" {
-  name               = "master-node"
+  count  = 1
+  name               = "master-node-${count.index}"
   region             = "fra1"
   size               = "s-1vcpu-1gb"
   image              = "ubuntu-24-04-x64"
@@ -35,7 +36,7 @@ resource "digitalocean_droplet" "master_node" {
 
 resource "digitalocean_droplet" "worker_node" {
   count  = 2
-  name   = "worker-node-${count.index}"
+  name               = "worker-node-${count.index}"
   region             = "fra1"
   size               = "s-1vcpu-1gb"
   image              = "ubuntu-24-04-x64"
