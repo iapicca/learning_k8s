@@ -9,7 +9,7 @@ locals {
 
 resource "digitalocean_firewall" "kubernetes_master" {
   name   = "kubernetes-master-firewall"
-  droplet_ids = [digitalocean_droplet.master_node.id]
+  droplet_ids = [for node in digitalocean_droplet.master_node : node.id]
 
   # Kubernetes API server	
   inbound_rule {
@@ -47,7 +47,7 @@ resource "digitalocean_firewall" "kubernetes_master" {
 
 resource "digitalocean_firewall" "kubernetes_worker" {
   name   = "kubernetes-worker-firewall"
-  droplet_ids = [for worker in digitalocean_droplet.worker_node : worker.id]
+  droplet_ids = [for node in digitalocean_droplet.worker_node : node.id]
   # Kubelet API
   inbound_rule {
     protocol         = "tcp"

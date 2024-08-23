@@ -23,9 +23,12 @@ resource "null_resource" "all_nodes_provisioner" {
 
   provisioner "remote-exec" {
     inline = flatten([
+      "sudo apt-get update",
       "sudo snap install task --classic",
+      "sudo hostnamectl set-hostname \"${local.all_nodes[count.index].name}\"",
+      [for node in  local.all_nodes : "sudo sh -c 'echo \"${node.ipv4_address} ${node.name}\" >> /etc/hosts'"],
+      #! best to leave task command last
       "task setup-kubernetes",
-      [for node in  local.all_nodes : "sudo sh -c 'echo \"${node.ipv4_address} ${node.name}\" >> /etc/hosts'"]
     ])
   }
 }
