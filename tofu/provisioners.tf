@@ -23,6 +23,8 @@ resource "null_resource" "all_nodes_provisioner" {
 
   provisioner "remote-exec" {
     inline = flatten([
+      "echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' >> ~/.bashrc",
+      "source ~/.bashrc",
       "sudo apt-get update",
       "sudo snap install task --classic",
       "sudo hostnamectl set-hostname \"${local.all_nodes[count.index].name}\"",

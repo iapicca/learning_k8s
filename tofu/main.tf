@@ -20,7 +20,7 @@ resource "digitalocean_droplet" "master_node" {
   count  = 1
   name               = "master-node-${count.index}"
   region             = "fra1"
-  size               = "s-1vcpu-1gb"
+  size               = "s-2vcpu-2gb"
   image              = "ubuntu-24-04-x64"
   ssh_keys           = [digitalocean_ssh_key.ssh_public_key.fingerprint]
   backups            = false
@@ -38,7 +38,7 @@ resource "digitalocean_droplet" "worker_node" {
   count  = 2
   name               = "worker-node-${count.index}"
   region             = "fra1"
-  size               = "s-1vcpu-1gb"
+  size               = "s-2vcpu-2gb"
   image              = "ubuntu-24-04-x64"
   ssh_keys           = [digitalocean_ssh_key.ssh_public_key.fingerprint]
   backups            = false
