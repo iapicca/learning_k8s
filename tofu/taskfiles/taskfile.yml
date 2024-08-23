@@ -21,15 +21,23 @@ tasks:
       - sudo apt-get update
     sudo: true
 
-  install-containerd:
-    desc: Install containerd container runtime
-    cmds:
-      - sudo apt-get install -y containerd
-      - sudo mkdir -p /etc/containerd
-      - sudo containerd config default | sudo tee /etc/containerd/config.toml
-      - sudo systemctl restart containerd
-      - sudo systemctl enable containerd
-    sudo: true
+install-containerd:
+  desc: Install and configure containerd container runtime with IPv4 forwarding
+  cmds:
+    - sudo apt-get update && sudo apt-get install -y containerd
+    - sudo mkdir -p /etc/containerd
+    - sudo containerd config default | sudo tee /etc/containerd/config.toml
+    - sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+    - sudo sysctl -w net.ipv4.ip_forward=1
+    - echo "net.ipv4.ip_forward=1" | sudo tee -a /etc/sysctl.conf
+    - sudo sysctl --system
+    - sudo modprobe br_netfilter
+    - echo "br_netfilter" | sudo tee /etc/modules-load.d/br_netfilter.conf
+    - sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
+    - echo "net.bridge.bridge-nf-call-iptables=1" | sudo tee -a /etc/sysctl.conf
+    - sudo systemctl restart containerd
+    - sudo systemctl enable containerd
+  sudo: true
 
   install-kubeadm:
     desc: Install kubeadm, kubelet, and kubectl
