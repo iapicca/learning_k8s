@@ -4,11 +4,6 @@ terraform {
       source  = "digitalocean/digitalocean"
       version = "~> 2.0"
     }
-
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 3.0"
-    }
   }
 }
 
@@ -21,23 +16,7 @@ resource "digitalocean_ssh_key" "ssh_public_key" {
   public_key = file("/Users/francesco/.ssh/do_ssh_key.pub")
 }
 
-data "docker_registry_image" "k0s" {
-  name = "k0sproject/k0s:latest"
-}
 
-resource "docker_image" "controller_node_image" {
-  name = data.docker_registry_image.k0s.name
-  build {
-    path = "."
-    tag  = ["zoo:develop"]
-    build_arg = {
-      foo : "zoo"
-    }
-    label = {
-      author : "zoo"
-    }
-  }
-}
 
 resource "digitalocean_droplet" "controller_node" {
   count  = 1
