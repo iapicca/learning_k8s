@@ -1,6 +1,6 @@
 locals {  
   all_nodes = flatten([
-    digitalocean_droplet.master_node,
+    digitalocean_droplet.controller_node,
     digitalocean_droplet.worker_node,
   ]) 
 }

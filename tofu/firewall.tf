@@ -2,14 +2,14 @@
 
 locals {  
   all_ips = [for node in  flatten([
-    digitalocean_droplet.master_node,
+    digitalocean_droplet.controller_node,
     digitalocean_droplet.worker_node,
   ]) : node.ipv4_address]
 }
 
-resource "digitalocean_firewall" "kubernetes_master" {
-  name   = "kubernetes-master-firewall"
-  droplet_ids = [for node in digitalocean_droplet.master_node : node.id]
+resource "digitalocean_firewall" "kubernetes_controller" {
+  name   = "kubernetes-controller-firewall"
+  droplet_ids = [for node in digitalocean_droplet.controller_node : node.id]
 
   # Kubernetes API server	
   inbound_rule {
