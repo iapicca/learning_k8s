@@ -1,0 +1,24 @@
+apiVersion: k0sctl.k0sproject.io/v1beta1
+kind: Cluster
+metadata:
+  name: k0s-cluster
+spec:
+  hosts:
+  - ssh:
+      address: 206.81.31.231
+      user: root
+      port: 22
+      keyPath: /Users/francesco/.ssh/do_ssh_key
+    role: controller
+  - ssh:
+      address: 161.35.218.68
+      user: root
+      port: 22
+      keyPath: /Users/francesco/.ssh/do_ssh_key
+    role: worker
+  - ssh:
+      address: 206.81.20.20
+      user: root
+      port: 22
+      keyPath: /Users/francesco/.ssh/do_ssh_key
+    role: worker

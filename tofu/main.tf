@@ -4,6 +4,7 @@ terraform {
       source  = "digitalocean/digitalocean"
       version = "~> 2.0"
     }
+
   }
 }
 
@@ -13,12 +14,12 @@ provider "digitalocean" {
 
 resource "digitalocean_ssh_key" "ssh_public_key" {
   name       = "digitalocean_public_key"
-  public_key = file("/Users/francesco/.ssh/do_ssh_key.pub")
+  public_key = data.local_file.ssh_public_key_file.content
 }
 
-resource "digitalocean_droplet" "master_node" {
+resource "digitalocean_droplet" "controller_node" {
   count  = 1
-  name               = "master-node-${count.index}"
+  name               = "controller-node-${count.index}"
   region             = "fra1"
   size               = "s-1vcpu-1gb"
   image              = "ubuntu-24-04-x64"
@@ -29,7 +30,7 @@ resource "digitalocean_droplet" "master_node" {
   connection {
     type        = "ssh"
     user        = "root"
-    private_key = file("/Users/francesco/.ssh/do_ssh_key")
+    private_key = data.local_file.ssh_public_key_file.content
     host        = self.ipv4_address
   }
 }
@@ -47,7 +48,7 @@ resource "digitalocean_droplet" "worker_node" {
   connection {
     type        = "ssh"
     user        = "root"
-    private_key = file("/Users/francesco/.ssh/do_ssh_key")
+    private_key = data.local_file.ssh_private_key_file.content
     host        = self.ipv4_address
   }
 }
