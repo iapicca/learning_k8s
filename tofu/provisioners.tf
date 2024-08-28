@@ -1,34 +1,17 @@
-locals {  
-  all_nodes = flatten([
-    digitalocean_droplet.controller_node,
-    digitalocean_droplet.worker_node,
-  ]) 
-}
+resource "null_resource" "k0s_provisioner" {
+  depends_on =  [local.k0s_provisioner_requirements]
+    
+  provisioner "local-exec" {
+    environment = {
+      SSH = "${data.local_file.ssh_private_key_file.filename}"
+      IPS = "${join(" ", local.all_ips)}"
+      CTRL_COUNT = "${local.controllers_count}"
+    }
 
-resource "null_resource" "all_nodes_provisioner" {
-  depends_on = [local.all_nodes]
-  count = length(local.all_nodes)
-
-  connection {
-    type        = "ssh"
-    user        = "root"
-    private_key = file("/Users/francesco/.ssh/do_ssh_key")
-    host        = local.all_nodes[count.index].ipv4_address
+    command = "k0sctl init -i $SSH -C $CTRL_COUNT $IPS > k0sctl.yaml"
   }
 
-  provisioner "file" {
-    source      = "taskfiles/taskfile.yml"
-    destination = "/root/taskfile.yml"
-  }
-
-  provisioner "remote-exec" {
-    inline = flatten([
-      "sudo apt-get update",
-      "sudo snap install task --classic",
-      "sudo hostnamectl set-hostname \"${local.all_nodes[count.index].name}\"",
-      [for node in  local.all_nodes : "sudo sh -c 'echo \"${node.ipv4_address} ${node.name}\" >> /etc/hosts'"],
-      #! best to leave task command last
-      "task setup-kubernetes",
-    ])
+  provisioner "local-exec" {
+    command = "k0sctl apply --config k0sctl.yaml > ../.kube/config.yaml"
   }
 }

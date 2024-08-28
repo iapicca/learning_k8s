@@ -1,13 +1,6 @@
 # https://kubernetes.io/docs/reference/networking/ports-and-protocols/
 
-locals {  
-  all_ips = [for node in  flatten([
-    digitalocean_droplet.controller_node,
-    digitalocean_droplet.worker_node,
-  ]) : node.ipv4_address]
-}
-
-resource "digitalocean_firewall" "kubernetes_controller" {
+resource "digitalocean_firewall" "kubernetes_controller_firewall" {
   name   = "kubernetes-controller-firewall"
   droplet_ids = [for node in digitalocean_droplet.controller_node : node.id]
 
@@ -45,9 +38,17 @@ resource "digitalocean_firewall" "kubernetes_controller" {
 }
 
 
-resource "digitalocean_firewall" "kubernetes_worker" {
+resource "digitalocean_firewall" "kubernetes_worker_firewall" {
   name   = "kubernetes-worker-firewall"
   droplet_ids = [for node in digitalocean_droplet.worker_node : node.id]
+
+  # Kubernetes API server	
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "6443"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
   # Kubelet API
   inbound_rule {
     protocol         = "tcp"
